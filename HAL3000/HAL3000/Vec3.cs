@@ -12,7 +12,9 @@ namespace HAL3000
 
     public Vec3()
     {
-
+      X = 0.0f;
+      Y = 0.0f;
+      Z = 0.0f;
     }
 
     public Vec3(Vector3 value)

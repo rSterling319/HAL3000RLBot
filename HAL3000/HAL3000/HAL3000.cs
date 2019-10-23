@@ -28,7 +28,7 @@ namespace HAL3000
       // This controller will contain all the inputs that we want the bot to perform.
       Controller controller = new Controller();
 
-      _gameDataMgr.PreProcess(gameTickPacket);
+      PreProcess(gameTickPacket);
 
       // Store the required data from the gameTickPacket.
       // The GameTickPacket's attributes are nullables, so you must use .Value.
@@ -56,6 +56,12 @@ namespace HAL3000
       controller.Throttle = 1;
 
       return controller;
+    }
+
+    private void PreProcess(GameTickPacket game)
+    {
+      _ball = new Ball(game.Ball);
+      _me = new Player(game.Players(this.index).Value);
     }
   }
 }
