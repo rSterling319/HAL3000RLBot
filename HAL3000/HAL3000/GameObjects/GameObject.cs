@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HAL3000.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,8 +39,15 @@ namespace HAL3000
       }
     }
 
+    public double DistanceTo2D(GameObject objTo)
+    {
+      return MathCalc.Distance2D(objTo, this);
+    }
 
-
+    public double DistanceTo2D(Vec3 objTo)
+    {
+      return MathCalc.Distance2D(objTo, this);
+    }
 
     private Vec3[] RotatorToMatrix()
     {

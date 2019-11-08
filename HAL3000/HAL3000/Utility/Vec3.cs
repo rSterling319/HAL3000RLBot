@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAL3000
+namespace HAL3000.Utility
 {
   public class Vec3
   {
@@ -38,11 +38,20 @@ namespace HAL3000
       Z = z;
     }
 
+    public Vec3(double x, double y, double z) :this((float)x, (float)y, (float)z)
+    {}
+
     public float X { get; set; }
 
     public float Y { get; set; }
 
     public float Z { get; set; }
+
+    public double Xp2 => Math.Pow(X, 2.0);
+
+    public double Yp2 => Math.Pow(Y, 2.0);
+
+    public double Zp2 => Math.Pow(Z, 2.0);
 
     public float Magnitude()
     {
@@ -104,6 +113,8 @@ namespace HAL3000
     /// <returns></returns>
     public static Vec3 operator *(float scalar, Vec3 vec) =>
       new Vec3(scalar * vec.X, scalar * vec.Y, scalar * vec.Z);
+    public static Vec3 operator *(double scalar, Vec3 vec) =>
+   new Vec3(scalar * vec.X, scalar * vec.Y, scalar * vec.Z);
 
     public static implicit operator Vec3(Vector3 vector3) => new Vec3(vector3);
 

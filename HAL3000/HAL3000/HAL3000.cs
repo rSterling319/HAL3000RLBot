@@ -1,67 +1,88 @@
 ﻿using System;
 using RLBotDotNet;
 using rlbot.flat;
+using System.Collections.Generic;
+using HAL3000.States;
+using HAL3000.Utility;
 
 namespace HAL3000
 {
   // We want to our bot to derive from Bot, and then implement its abstract methods.
   public class HAL3000 : Bot
-  {
-    private Controller _controllerState = new Controller();
-    private GameDataManager _gameDataMgr = null;
-    private Ball _ball = new Ball();
-    private Player _me = new Player();
-    private DateTime _start = DateTime.Now;
+  {    
+    public State.Controller_State Controller;
+    public Ball Ball = new Ball();
+    public Player Me = new Player();
+    private Dictionary<string, Player> _players = new Dictionary<string, Player>();
+    public double Start = Utils.MarkTime();
 
-    //private State _state = some state
-    //Controller? different from above?
+    private State _state = new CalculatedShotState();
+
+    private State CalcShotState { get; } = new CalculatedShotState();
+
+    private State ChasingState { get; } = new ChasingState();
 
     // We want the constructor for ExampleBot to extend from Bot, but we don't want to add anything to it.
     public HAL3000(string botName, int botTeam, int botIndex) : base(botName, botTeam, botIndex)
     {
-      _gameDataMgr = new GameDataManager();
     }
+
 
     public override Controller GetOutput(GameTickPacket gameTickPacket)
     {
-      // This controller object will be returned at the end of the method.
-      // This controller will contain all the inputs that we want the bot to perform.
-      Controller controller = new Controller();
+      BallPrediction prediction = GetBallPrediction();
+      
+
+      // Loop through every 10th point so we don't render too many lines.
+      for (int i = 10; i < prediction.SlicesLength; i += 10)
+      {
+        Vector3 pointA = prediction.Slices(i - 10).Value.Physics.Value.Location.Value;
+        Vector3 pointB = prediction.Slices(i).Value.Physics.Value.Location.Value;
+
+        Renderer.DrawLine3D(System.Windows.Media.Color.FromRgb(255, 0, 255), pointA, pointB);
+      }
+
 
       PreProcess(gameTickPacket);
+      CheckState();
 
-      // Store the required data from the gameTickPacket.
-      // The GameTickPacket's attributes are nullables, so you must use .Value.
-      // It is recommended to create your own internal data structure to avoid the displeasing .Value syntax.
-      Vector3 ballLocation = gameTickPacket.Ball.Value.Physics.Value.Location.Value;
-      Vector3 carLocation = gameTickPacket.Players(this.index).Value.Physics.Value.Location.Value;
-      Rotator carRotation = gameTickPacket.Players(this.index).Value.Physics.Value.Rotation.Value;
+      System.Numerics.Vector2 left = new System.Numerics.Vector2(10, 10 + 100 * team);
+      Renderer.DrawString2D($"{team} - {MathCalc.AngleToTarget(Ball, Me).ToString("f2")}", 
+                            System.Windows.Media.Color.FromRgb(255, 0, 255), left, 3, 3);
 
-      // Calculate to get the angle from the front of the bot's car to the ball.
-      double botToTargetAngle = Math.Atan2(ballLocation.Y - carLocation.Y, ballLocation.X - carLocation.X);
-      double botFrontToTargetAngle = botToTargetAngle - carRotation.Yaw;
-      // Correct the angle
-      if (botFrontToTargetAngle < -Math.PI)
-        botFrontToTargetAngle += 2 * Math.PI;
-      if (botFrontToTargetAngle > Math.PI)
-        botFrontToTargetAngle -= 2 * Math.PI;
-
-      // Decide which way to steer in order to get to the ball.
-      if (botFrontToTargetAngle > 0)
-        controller.Steer = 1;
-      else
-        controller.Steer = -1;
-
-      // Set the throttle to 1 so the bot can move.
-      controller.Throttle = 1;
-
-      return controller;
+      return _state.Execute(this);
     }
 
     private void PreProcess(GameTickPacket game)
     {
-      _ball = new Ball(game.Ball);
-      _me = new Player(game.Players(this.index).Value);
+      Ball = new Ball(game.Ball);
+      Me = new Player(game.Players(this.index).Value);
+      for(int i = 0; i < game.PlayersLength; ++i)
+      {
+        if(!_players.ContainsKey(game.Players(i).Value.Name))
+        {
+          _players.Add(game.Players(i).Value.Name, new Player(game.Players(i).Value));
+        }
+        else
+        {
+          _players[game.Players(i).Value.Name] = new Player(game.Players(i).Value);
+        }
+      }
+    }
+
+    private void CheckState()
+    {
+      if (_state.Expired)
+      {
+        if (CalcShotState.Available(this))
+        {
+          _state = CalcShotState;
+        }
+        if (ChasingState.Available(this))
+        {
+          _state = ChasingState;
+        }
+      }
     }
   }
 }

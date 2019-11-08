@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -41,6 +43,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -51,6 +54,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>hal3000img.ico</ApplicationIcon>
@@ -59,6 +63,7 @@
     <Reference Include="FlatBuffers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RLBot.Framework.1.11.0\lib\net461\FlatBuffers.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="RLBotDotNet, Version=1.11.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\RLBot.Framework.1.11.0\lib\net461\RLBotDotNet.dll</HintPath>
     </Reference>
@@ -73,16 +78,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ball.cs" />
-    <Compile Include="GameDataManager.cs" />
-    <Compile Include="GameObject.cs" />
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\Dodge.cs" />
+    <Compile Include="GameObjects\Ball.cs" />
+    <Compile Include="GameObjects\GameObject.cs" />
+    <Compile Include="GameObjects\Goal.cs" />
     <Compile Include="HAL3000.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="GameObjects\Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rotator3.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="Vec3.cs" />
+    <Compile Include="States\CalculatedShotState.cs" />
+    <Compile Include="States\ChasingState.cs" />
+    <Compile Include="States\Dodge.cs" />
+    <Compile Include="States\State.cs" />
+    <Compile Include="Utility\Constants.cs" />
+    <Compile Include="Utility\MathCalc.cs" />
+    <Compile Include="Utility\Rotator3.cs" />
+    <Compile Include="Utility\Utils.cs" />
+    <Compile Include="Utility\Vec3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -94,6 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="hal3000img.ico" />
+    <Content Include="hal3000img.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

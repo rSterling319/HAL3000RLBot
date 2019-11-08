@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAL3000
+namespace HAL3000.Utility
 {
   public static class Utils
   {
@@ -32,7 +32,6 @@ namespace HAL3000
     /// <returns></returns>
     public static Vec3 ToLocation(object target)
     {
-      object vec3 = null;
       if (target is Vec3)
       {
         return (Vec3)target;
@@ -45,6 +44,46 @@ namespace HAL3000
       {
         return new Vec3();
       }
+    }
+
+    public static Vec3 Future(GameObject gameObject, float time)
+    {
+      float x = gameObject.Location.X + (gameObject.Velocity.X * time);
+      float y = gameObject.Location.Y + (gameObject.Velocity.Y * time);
+      float z = gameObject.Location.Z + (gameObject.Velocity.Z * time);
+
+      return new Vec3(x, y, z);
+    }
+
+    public static float Sign(double val)
+    {
+      return val <= 0.0 ? -1.0f : 1.0f;
+    }
+
+    public static float Steer(double angle)
+    {
+      double result = Math.Pow((10.0 * angle + Sign(angle)), 3.0) / 20.0;
+      return (float)Cap(result, -1, 1);
+    }
+
+    public static double Cap(double num, double low, double high)
+    {
+      double ret = num;
+      if(num < low)
+      {
+        ret = low;
+      }
+      else if(num > high)
+      {
+        ret = high;
+      }
+
+      return ret;
+    }
+
+    public static double MarkTime()
+    {
+      return DateTime.Now.Ticks / TimeSpan.TicksPerSecond;
     }
   }
 }

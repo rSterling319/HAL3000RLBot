@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HAL3000
+namespace HAL3000.Utility
 {
   public class Rotator3
   {
